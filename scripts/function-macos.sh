@@ -421,7 +421,9 @@ create_universal_libraries_for_macos_default_frameworks() {
 
   echo -e "INFO: Building universal libraries in ${ROOT_UNIVERSAL_DIRECTORY_PATH} for default frameworks using ${TARGET_ARCH_LIST[@]}\n" 1>>"${BASEDIR}"/build.log 2>&1
 
-  create_ffmpeg_universal_library "${ARCH_VAR_MACOS}"
+  if [[ ${SKIP_ffmpeg} -ne 1 ]]; then
+    create_ffmpeg_universal_library "${ARCH_VAR_MACOS}"
+  fi
 
   create_ffmpeg_kit_universal_library "${ARCH_VAR_MACOS}"
 
@@ -431,7 +433,9 @@ create_universal_libraries_for_macos_default_frameworks() {
 create_macos_default_frameworks() {
   echo -e "INFO: Building default frameworks\n" 1>>"${BASEDIR}"/build.log 2>&1
 
-  create_ffmpeg_framework "${ARCH_VAR_MACOS}"
+  if [[ ${SKIP_ffmpeg} -ne 1 ]]; then
+    create_ffmpeg_framework "${ARCH_VAR_MACOS}"
+  fi
 
   create_ffmpeg_kit_framework "${ARCH_VAR_MACOS}"
 

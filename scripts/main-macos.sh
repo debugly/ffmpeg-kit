@@ -232,7 +232,21 @@ if [[ ${SKIP_ffmpeg} -ne 1 ]]; then
     exit 1
   fi
 else
-  echo -e "\nffmpeg: skipped"
+  echo -e "\n use prebuild ijk ffmpeg:"
+  ${BASEDIR}/FFToolChain/main.sh install -p macos -l ffmpeg -d "../prebuilt/$(get_build_directory)"
+  mv ${BASEDIR}/prebuilt/$(get_build_directory)/ffmpeg/include/libffmpeg/*.h ${BASEDIR}/prebuilt/$(get_build_directory)/ffmpeg/include/
+
+  pkg_cfg_dir=$INSTALL_PKG_CONFIG_DIR
+  for dir in `find "${BASEDIR}/prebuilt/$(get_build_directory)" -type f -name "*.pc" | xargs dirname | uniq` ;
+  do
+      if [[ $pkg_cfg_dir ]];then
+          pkg_cfg_dir="${pkg_cfg_dir}:${dir}"
+      else
+          pkg_cfg_dir="${dir}"
+      fi
+  done
+  echo "pkg_cfg_dir:$pkg_cfg_dir"
+  INSTALL_PKG_CONFIG_DIR="$pkg_cfg_dir"
 fi
 
 # SKIP TO SPEED UP THE BUILD

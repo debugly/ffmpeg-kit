@@ -22,7 +22,7 @@ set_toolchain_paths "${LIB_NAME}"
 HOST=$(get_host)
 export CFLAGS="$(get_cflags ${LIB_NAME}) -I${LIB_INSTALL_BASE}/ffmpeg/include"
 export CXXFLAGS=$(get_cxxflags ${LIB_NAME})
-export LDFLAGS="$(get_ldflags ${LIB_NAME}) -F${LIB_INSTALL_BASE}/ffmpeg/framework -framework Foundation -framework CoreVideo -framework libavdevice"
+export LDFLAGS="$(get_ldflags ${LIB_NAME}) -L${LIB_INSTALL_BASE}/ffmpeg/lib -framework Foundation -framework CoreVideo"
 export PKG_CONFIG_LIBDIR="${INSTALL_PKG_CONFIG_DIR}"
 
 cd "${BASEDIR}"/apple 1>>"${BASEDIR}"/build.log 2>&1 || return 1
