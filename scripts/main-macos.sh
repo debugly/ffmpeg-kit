@@ -207,6 +207,14 @@ for custom_library_index in "${CUSTOM_LIBRARIES[@]}"; do
   fi
 done
 
+# PROCESS LTS BUILD OPTION FIRST AND SET BUILD TYPE: MAIN OR LTS
+for argument in "$@"; do
+  if [[ "$argument" == "-l" ]] || [[ "$argument" == "--lts" ]]; then
+    export FFMPEG_KIT_LTS_BUILD="1"
+    BUILD_TYPE_ID+="LTS "
+  fi
+done
+
 # SKIP TO SPEED UP THE BUILD
 if [[ ${SKIP_ffmpeg} -ne 1 ]]; then
 

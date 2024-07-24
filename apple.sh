@@ -152,13 +152,6 @@ if [[ -z ${BUILD_VERSION} ]]; then
   exit 1
 fi
 
-# PROCESS LTS BUILD OPTION FIRST AND SET BUILD TYPE: MAIN OR LTS
-for argument in "$@"; do
-  if [[ "$argument" == "-l" ]] || [[ "$argument" == "--lts" ]]; then
-    export FFMPEG_KIT_LTS_BUILD="1"
-    BUILD_TYPE_ID+="LTS "
-  fi
-done
 
 # PROCESS BUILD OPTIONS
 while [ ! $# -eq 0 ]; do
