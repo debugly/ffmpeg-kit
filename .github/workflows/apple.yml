@@ -9,7 +9,7 @@ on:
 
 jobs:
   build:
-    name: Analyse-Publish
+    name: apple tls on sonoma
     runs-on: macos-14
 
     steps:
