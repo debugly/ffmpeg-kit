@@ -1,0 +1,47 @@
+name: IJKMediaPlayerKit
+
+on:
+  # push:
+  #   branches: [master]
+  # pull_request:
+  #   branches: [master]
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Analyse-Publish
+    runs-on: macos-14
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
+          submodules: recursive
+    - name: Build iOS Framework
+      run: ./ios.sh --skip-ffmpeg --lts --disable-armv7 --disable-armv7s --disable-arm64-mac-catalyst --disable-arm64e --disable-i386 --disable-x86-64-mac-catalyst --disable-arm64-simulator
+    - name: Build macOS Framework      
+      run: ./macos.sh --skip-ffmpeg --lts
+    - name: Build tvOS Framework
+      run: ./tvos.sh --skip-ffmpeg --lts
+    - name: Zip Frameworks
+      run: |
+        cd prebuilt
+        mkdir -p dist
+
+        cd bundle-apple-framework-ios-lts
+        zip -ryq ../dist/ffmpeg-kit-ijk-6.1.1-ios-lts.zip ./*
+        cd ..
+
+        cd bundle-apple-framework-macos-lts
+        zip -ryq ../dist/ffmpeg-kit-ijk-6.1.1-macos-lts.zip ./*
+        cd ..
+
+        cd bundle-apple-framework-tvos-lts
+        zip -ryq ../dist/ffmpeg-kit-ijk-6.1.1-tvos-lts.zip ./*
+        cd ..
+
+    - name: Create Release
+      env:
+        GH_TOKEN: ${{ github.token }}
+      run: |
+        gh release create k${{ env.TAG }} -p -t "FFmpegKit Native 6.1.1.LTS" prebuilt/dist/*.*

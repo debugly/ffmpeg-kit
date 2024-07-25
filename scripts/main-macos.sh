@@ -215,6 +215,14 @@ for argument in "$@"; do
   fi
 done
 
+# PROCESS LTS BUILD OPTION FIRST AND SET BUILD TYPE: MAIN OR LTS
+for argument in "$@"; do
+  if [[ "$argument" == "-l" ]] || [[ "$argument" == "--lts" ]]; then
+    export FFMPEG_KIT_LTS_BUILD="1"
+    BUILD_TYPE_ID+="LTS "
+  fi
+done
+
 # SKIP TO SPEED UP THE BUILD
 if [[ ${SKIP_ffmpeg} -ne 1 ]]; then
 
@@ -241,9 +249,11 @@ if [[ ${SKIP_ffmpeg} -ne 1 ]]; then
   fi
 else
   echo -e "\n use prebuild ijk ffmpeg:"
-  ${BASEDIR}/FFToolChain/main.sh install -p macos -l ffmpeg -d "../prebuilt/$(get_build_directory)"
+  ${BASEDIR}/FFToolChain/main.sh install -p macos -l ffmpeg
+  cp -fR ${BASEDIR}/FFToolChain/build/product/${FFMPEG_KIT_BUILD_TYPE}/universal/* "${BASEDIR}/prebuilt/$(get_build_directory)"
   mv ${BASEDIR}/prebuilt/$(get_build_directory)/ffmpeg/include/libffmpeg/*.h ${BASEDIR}/prebuilt/$(get_build_directory)/ffmpeg/include/
 
+  ${BASEDIR}/FFToolChain/main.sh install -c "${BASEDIR}/prebuilt/$(get_build_directory)"
   pkg_cfg_dir=$INSTALL_PKG_CONFIG_DIR
   for dir in `find "${BASEDIR}/prebuilt/$(get_build_directory)" -type f -name "*.pc" | xargs dirname | uniq` ;
   do
@@ -255,6 +265,7 @@ else
   done
   echo "pkg_cfg_dir:$pkg_cfg_dir"
   INSTALL_PKG_CONFIG_DIR="$pkg_cfg_dir"
+  export PKG_CONFIG_LIBDIR="${INSTALL_PKG_CONFIG_DIR}"
 fi
 
 # SKIP TO SPEED UP THE BUILD

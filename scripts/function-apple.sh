@@ -188,6 +188,11 @@ is_apple_architecture_variant_supported() {
 # DEPENDS TARGET_ARCH_LIST VARIABLE
 #
 create_ffmpeg_universal_library() {
+
+  if [[ ${SKIP_ffmpeg} -eq 1 ]]; then
+    return
+  fi
+
   local ARCHITECTURE_VARIANT="$1"
   local TARGET_ARCHITECTURES=("$(get_apple_architectures_for_variant "${ARCHITECTURE_VARIANT}")")
   local LIBRARY_NAME="ffmpeg"
@@ -335,6 +340,10 @@ create_ffmpeg_kit_universal_library() {
 # 1. architecture variant
 #
 create_ffmpeg_framework() {
+  if [[ ${SKIP_ffmpeg} -eq 1 ]]; then
+    return
+  fi
+  
   local ARCHITECTURE_VARIANT="$1"
   local LIBRARY_NAME="ffmpeg"
   local UNIVERSAL_LIBRARY_DIRECTORY="${BASEDIR}/.tmp/$(get_universal_library_directory "${ARCHITECTURE_VARIANT}")"

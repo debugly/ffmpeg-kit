@@ -206,6 +206,14 @@ for custom_library_index in "${CUSTOM_LIBRARIES[@]}"; do
   fi
 done
 
+# PROCESS LTS BUILD OPTION FIRST AND SET BUILD TYPE: MAIN OR LTS
+for argument in "$@"; do
+  if [[ "$argument" == "-l" ]] || [[ "$argument" == "--lts" ]]; then
+    export FFMPEG_KIT_LTS_BUILD="1"
+    BUILD_TYPE_ID+="LTS "
+  fi
+done
+
 # SKIP TO SPEED UP THE BUILD
 if [[ ${SKIP_ffmpeg} -ne 1 ]]; then
 
@@ -231,7 +239,31 @@ if [[ ${SKIP_ffmpeg} -ne 1 ]]; then
     exit 1
   fi
 else
-  echo -e "\nffmpeg: skipped"
+  echo -e "\n use prebuild ijk ffmpeg:"
+  ${BASEDIR}/FFToolChain/main.sh install -p tvos -l ffmpeg 1>>"${BASEDIR}"/build.log 2>&1
+
+  if [[ ${ARCH} == 'arm64-simulator' || ${ARCH} == 'x86-64' ]];then
+    cp -fR ${BASEDIR}/FFToolChain/build/product/${FFMPEG_KIT_BUILD_TYPE}/universal-simulator/* "${BASEDIR}/prebuilt/$(get_build_directory)"
+  else
+    cp -fR ${BASEDIR}/FFToolChain/build/product/${FFMPEG_KIT_BUILD_TYPE}/universal/* "${BASEDIR}/prebuilt/$(get_build_directory)"
+  fi
+
+  mv ${BASEDIR}/prebuilt/$(get_build_directory)/ffmpeg/include/libffmpeg/*.h ${BASEDIR}/prebuilt/$(get_build_directory)/ffmpeg/include/
+
+  set_toolchain_paths
+
+  pkg_cfg_dir=$INSTALL_PKG_CONFIG_DIR
+  for dir in `find "${BASEDIR}/prebuilt/$(get_build_directory)" -type f -name "*.pc" | xargs dirname | uniq` ;
+  do
+      if [[ $pkg_cfg_dir ]];then
+          pkg_cfg_dir="${pkg_cfg_dir}:${dir}"
+      else
+          pkg_cfg_dir="${dir}"
+      fi
+  done
+  echo "pkg_cfg_dir:$pkg_cfg_dir"
+  INSTALL_PKG_CONFIG_DIR="$pkg_cfg_dir"
+  export PKG_CONFIG_LIBDIR="${INSTALL_PKG_CONFIG_DIR}"
 fi
 
 # SKIP TO SPEED UP THE BUILD
