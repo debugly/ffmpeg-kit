@@ -47,4 +47,4 @@ jobs:
         GH_TOKEN: ${{ github.token }}
       run: |
         RELEASE_DATE=$(TZ=UTC-8 date +'%y%m%d%H%M%S')
-        gh release create "6.1.1-lts-%{RELEASE_DATE}" -t "FFmpegKit Native 6.1.1.LTS" prebuilt/dist/*.*
+        gh release create "6.1.1-lts-${RELEASE_DATE}" -t "FFmpegKit Native 6.1.1.LTS" prebuilt/dist/*.*
