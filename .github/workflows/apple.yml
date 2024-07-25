@@ -46,4 +46,5 @@ jobs:
       env:
         GH_TOKEN: ${{ github.token }}
       run: |
-        gh release create k${{ env.TAG }} -p -t "FFmpegKit Native 6.1.1.LTS" prebuilt/dist/*.*
+        RELEASE_DATE=$(TZ=UTC-8 date +'%y%m%d%H%M%S')
+        gh release create "6.1.1-lts-%{RELEASE_DATE}" -t "FFmpegKit Native 6.1.1.LTS" prebuilt/dist/*.*
